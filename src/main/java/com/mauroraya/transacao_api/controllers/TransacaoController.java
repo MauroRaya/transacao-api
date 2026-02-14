@@ -12,6 +12,7 @@ import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,15 @@ public class TransacaoController {
 
         return ResponseEntity
             .created(location)
+            .build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deletarTransacoes() {
+        transacaoService.deletarTodos();
+
+        return ResponseEntity
+            .ok()
             .build();
     }
 }

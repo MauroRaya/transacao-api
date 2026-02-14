@@ -17,4 +17,8 @@ public class GenericRepositoryImpl<T> implements GenericRepository<T> {
     public void criar(T item) {
         lista.add(item);
     }
+
+    public void deletarTodos() {
+        lista.clear();
+    }
 }

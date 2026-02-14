@@ -16,4 +16,8 @@ public class TransacaoService {
     public void criar(Transacao transacao) {
         transacaoRepository.criar(transacao);
     }
+
+    public void deletarTodos() {
+        transacaoRepository.deletarTodos();
+    }
 }
