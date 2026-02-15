@@ -1,5 +1,6 @@
 package com.mauroraya.transacao_api.controllers;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,8 @@ public class EstatisticaController {
     }
 
     @GetMapping
-    public Estatistica obterEstatisticas() {
-        return estatisticaService.obterEstatisticas();
+    public ResponseEntity<?> obterEstatisticas() {
+        Estatistica estatisticas = estatisticaService.obterEstatisticas();
+        return ResponseEntity.ok(estatisticas);
     }
 }
