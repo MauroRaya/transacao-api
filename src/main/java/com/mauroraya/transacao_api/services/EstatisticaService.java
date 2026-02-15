@@ -17,8 +17,8 @@ public class EstatisticaService {
         this.transacaoService = transacaoService;
     }
 
-    public Estatistica obterEstatisticas() {
-        List<Transacao> transacoes = transacaoService.obterRecentes();
+    public Estatistica obterEstatisticas(int intervalo) {
+        List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
 
         DoubleSummaryStatistics stats = transacoes
             .stream()

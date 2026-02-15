@@ -16,10 +16,6 @@ public class TransacaoService {
         this.transacaoRepository = transacaoRepository;
     }
 
-    public List<Transacao> obterRecentes() {
-        return obterRecentes(60);
-    }
-
     public List<Transacao> obterRecentes(int intervalo) {
         OffsetDateTime limite = OffsetDateTime
             .now()
