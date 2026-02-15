@@ -1,9 +1,12 @@
 package com.mauroraya.transacao_api.services;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import com.mauroraya.transacao_api.models.Transacao;
 import com.mauroraya.transacao_api.interfaces.GenericRepository;
+import com.mauroraya.transacao_api.models.Transacao;
 
 @Service
 public class TransacaoService {
@@ -11,6 +14,22 @@ public class TransacaoService {
 
     public TransacaoService(GenericRepository<Transacao> transacaoRepository) {
         this.transacaoRepository = transacaoRepository;
+    }
+
+    public List<Transacao> obterRecentes() {
+        return obterRecentes(60);
+    }
+
+    public List<Transacao> obterRecentes(int intervalo) {
+        OffsetDateTime limite = OffsetDateTime
+            .now()
+            .minusSeconds(intervalo);
+
+        return this.transacaoRepository
+            .obter()
+            .stream()
+            .filter(transacao -> transacao.dataHora().isAfter(limite))
+            .toList();
     }
 
     public void criar(Transacao transacao) {
