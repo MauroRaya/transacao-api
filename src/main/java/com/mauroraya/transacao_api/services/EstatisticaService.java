@@ -4,6 +4,8 @@ import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.mauroraya.transacao_api.models.Estatistica;
@@ -14,6 +16,7 @@ import io.micrometer.core.instrument.Timer;
 
 @Service
 public class EstatisticaService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TransacaoService transacaoService;
     private final Timer timer;
 
@@ -27,6 +30,8 @@ public class EstatisticaService {
 
     public Estatistica obterEstatisticas(int intervalo) {
         return timer.record(() -> {
+            logger.info("Calculando estatísticas para intervalo de {} segundos", intervalo);
+
             List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
 
             DoubleSummaryStatistics stats = transacoes
