@@ -9,9 +9,13 @@ import com.mauroraya.transacao_api.services.TransacaoService;
 import jakarta.validation.Valid;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,9 +36,20 @@ public class TransacaoController {
         BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
+            Map<String, String> mensagemErros = new HashMap<String, String>();
+
+            List<FieldError> erros = bindingResult.getFieldErrors();
+
+            erros.forEach(erro -> {
+                String chave = erro.getField();
+                String valor = erro.getDefaultMessage();
+
+                mensagemErros.put(chave, valor);
+            });
+
             return ResponseEntity
                 .unprocessableContent()
-                .build();
+                .body(mensagemErros);
         }
 
         Transacao transacao = new Transacao(
