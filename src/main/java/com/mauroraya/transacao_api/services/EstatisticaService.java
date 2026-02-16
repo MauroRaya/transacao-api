@@ -9,29 +9,39 @@ import org.springframework.stereotype.Service;
 import com.mauroraya.transacao_api.models.Estatistica;
 import com.mauroraya.transacao_api.models.Transacao;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+
 @Service
 public class EstatisticaService {
     private final TransacaoService transacaoService;
+    private final Timer timer;
 
-    public EstatisticaService(TransacaoService transacaoService) {
+    public EstatisticaService(
+        TransacaoService transacaoService,
+        MeterRegistry registry
+    ) {
         this.transacaoService = transacaoService;
+        this.timer = registry.timer("estatistica.calculo");
     }
 
     public Estatistica obterEstatisticas(int intervalo) {
-        List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
+        return timer.record(() -> {
+            List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
 
-        DoubleSummaryStatistics stats = transacoes
-            .stream()
-            .collect(Collectors.summarizingDouble(
-                transacao -> transacao.valor()
-            ));
+            DoubleSummaryStatistics stats = transacoes
+                .stream()
+                .collect(Collectors.summarizingDouble(
+                    transacao -> transacao.valor()
+                ));
 
-        return new Estatistica(
-            stats.getCount(),
-            stats.getSum(),
-            stats.getAverage(),
-            stats.getCount() == 0 ? 0 : stats.getMin(),
-            stats.getCount() == 0 ? 0 : stats.getMax()
-        );
+            return new Estatistica(
+                stats.getCount(),
+                stats.getSum(),
+                stats.getAverage(),
+                stats.getCount() == 0 ? 0 : stats.getMin(),
+                stats.getCount() == 0 ? 0 : stats.getMax()
+            );
+        });
     }
 }
