@@ -28,7 +28,7 @@ public class EstatisticaServiceTest {
         when(transacaoService.obterRecentes(60))
             .thenReturn(List.of());
 
-        Estatistica estatisticas = estatisticaService.obterEstatisticas(60);
+        Estatistica estatisticas = estatisticaService.calcularEstatisticas(60);
         assertEquals(new Estatistica(0, 0, 0, 0, 0), estatisticas);
     }
 
@@ -42,7 +42,7 @@ public class EstatisticaServiceTest {
         when(transacaoService.obterRecentes(60))
             .thenReturn(transacoes);
 
-        Estatistica estatisticas = estatisticaService.obterEstatisticas(60);
+        Estatistica estatisticas = estatisticaService.calcularEstatisticas(60);
         assertEquals(new Estatistica(2, 30, 15, 10, 20), estatisticas);
     }
 }
