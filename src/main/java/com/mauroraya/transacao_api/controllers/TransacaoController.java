@@ -61,7 +61,8 @@ public class TransacaoController {
 
         URI location = URI.create(String.format(
             "/transacao/%s",
-            transacao.dataHora()));
+            transacao.dataHora()
+        ));
 
         return ResponseEntity
             .created(location)
