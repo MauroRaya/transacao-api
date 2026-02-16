@@ -136,6 +136,7 @@ Vamos propôr a seguir alguns desafios extras caso você queira testar seus conh
 
 * [Git](https://git-scm.com/)
 * [Java 25](https://www.oracle.com/java/technologies/downloads/)
+* [Docker](https://www.docker.com/) (opcional)
 
 ### Clonando o repositório
 
@@ -166,4 +167,18 @@ Utilize o comando Maven respectivo do seu sistema.
 
 ```bash
 <mvn> spring-boot:run
+```
+
+### Executando com Docker (opcional)
+
+#### Build da imagem
+
+```bash
+docker build -t mauroraya/transacao-api .
+```
+
+#### Executando o container
+
+```bash
+docker run --name transacao-api -dp 8080:8080 mauroraya/transacao-api
 ```
