@@ -17,36 +17,39 @@ import io.micrometer.core.instrument.Timer;
 @Service
 public class EstatisticaService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final MeterRegistry registry;
     private final TransacaoService transacaoService;
-    private final Timer timer;
 
     public EstatisticaService(
-        TransacaoService transacaoService,
-        MeterRegistry registry
+        MeterRegistry registry,
+        TransacaoService transacaoService
     ) {
+        this.registry = registry;
         this.transacaoService = transacaoService;
-        this.timer = registry.timer("estatistica.calculo");
+    }
+
+    Estatistica calcularEstatisticas(int intervalo) {
+        logger.info("Calculando estatísticas para intervalo de {} segundos", intervalo);
+
+        List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
+
+        DoubleSummaryStatistics stats = transacoes
+            .stream()
+            .collect(Collectors.summarizingDouble(
+                transacao -> transacao.valor()
+            ));
+
+        return new Estatistica(
+            stats.getCount(),
+            stats.getSum(),
+            stats.getAverage(),
+            stats.getCount() == 0 ? 0 : stats.getMin(),
+            stats.getCount() == 0 ? 0 : stats.getMax()
+        );
     }
 
     public Estatistica obterEstatisticas(int intervalo) {
-        return timer.record(() -> {
-            logger.info("Calculando estatísticas para intervalo de {} segundos", intervalo);
-
-            List<Transacao> transacoes = transacaoService.obterRecentes(intervalo);
-
-            DoubleSummaryStatistics stats = transacoes
-                .stream()
-                .collect(Collectors.summarizingDouble(
-                    transacao -> transacao.valor()
-                ));
-
-            return new Estatistica(
-                stats.getCount(),
-                stats.getSum(),
-                stats.getAverage(),
-                stats.getCount() == 0 ? 0 : stats.getMin(),
-                stats.getCount() == 0 ? 0 : stats.getMax()
-            );
-        });
+        Timer timer = registry.timer("estatistica.calculo");
+        return timer.record(() -> calcularEstatisticas(intervalo));
     }
 }
